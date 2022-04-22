@@ -16,6 +16,16 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'))
 })
 
+app.get("/api/notes", function(req, res) {
+    readFileAsync(path.join(__dirname + "/db/db.json"), "utf8") 
+    .then(function(data){
+        notes=[].concat(JSON.parse(data))
+        return res.json(notes);
+    })
+});
+
+
+
 require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
 
