@@ -24,7 +24,19 @@ app.get("/api/notes", function(req, res) {
     })
 });
 
-
+app.post("/api/notes", (req, res) => {
+    let newNotes = req.body;
+    readFileAsync(path.join(__dirname + "/db/db.json"), "utf8") 
+    .then(function (data) {
+        notes = [].concat(JSON.parse(data));
+        newNotes.id = notes.length + 1;
+        notes.push(newNotes);
+        return notes
+    }).then(function(data){
+    writeFileAsync(path.join(__dirname + "/db/db.json"), JSON.stringify(data))
+        res.json(newNotes);
+    })
+});
 
 require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
