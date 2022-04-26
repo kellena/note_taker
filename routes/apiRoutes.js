@@ -1,12 +1,7 @@
-const { Router } = require("express");
 const fs = require("fs");
-const path = require("path");
 const router = require("express").Router()
 
 let db = require("../db/db.json")
-
-const readFileAsync = util.promisify(fs.readFile);
-const writeFileAsync = util.promisify(fs.writeFile);
 
 router.get("/notes", function(req, res) {
     return res.json(db);
@@ -15,16 +10,27 @@ router.get("/notes", function(req, res) {
 router.post("/notes", (req, res) => {
     const allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
     const newNotes = {
-        id: noteList[noteList.length - 1].id + 1,
+        id: allNotes[allNotes.length - 1].id + 1,
         title: req.body.title,
         text: req.body.text,
     };
 
     console.log(newNotes);
-    noteList.push(newNotes);
+    allNotes.push(newNotes);
     fs.writeFileSync("./db/db.json", JSON.stringify(allNotes));
 
     return res.json(allNotes);
 });
+
+router.delete('/api/notes/:id', (req, res) => {
+    console.log(req.params)
+    const noteId = parseInt(req.params.id)
+    const allNotes = JSON.parse(fs.readFileSync("./db/db.json"));
+    const newArray = allNotes.filter(note => note.id !== noteId);
+
+    fs.writeFileSync("./db/db.json", JSON.stringify(newArray));
+    res.json(newArray);
+});
+
 
 module.exports = router;
