@@ -14,7 +14,7 @@ To run the program, users are required to install 'express' via:
 
 Users will need to run the program in the integrated terminal via:
 
-    node index.js
+    node server.js
 
 ## Description
 

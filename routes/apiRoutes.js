@@ -1,30 +1,30 @@
+const { Router } = require("express");
 const fs = require("fs");
 const path = require("path");
-const util = require("util");
+const router = require("express").Router()
+
+let db = require("../db/db.json")
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 
-module.exports = function(app) {
-    app.get("/api/notes", function(req, res) {
-        readFileAsync(path.join(__dirname + "/db/db.json"), "utf8") 
-        .then(function(data){
-            notes=[].concat(JSON.parse(data))
-            return res.json(notes);
-        })
-    });
+router.get("/notes", function(req, res) {
+    return res.json(db);
+});
 
-    app.post("/api/notes", (req, res) => {
-        let newNotes = req.body;
-        readFileAsync(path.join(__dirname + "/db/db.json"), "utf8") 
-        .then(function (data) {
-            notes = [].concat(JSON.parse(data));
-            newNotes.id = notes.length + 1;
-            notes.push(newNotes);
-            return notes
-        }).then(function(data){
-        writeFileAsync(path.join(__dirname + "/db/db.json"), JSON.stringify(data))
-            res.json(newNotes);
-        })
-    });
-}
+router.post("/notes", (req, res) => {
+    const allNotes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    const newNotes = {
+        id: noteList[noteList.length - 1].id + 1,
+        title: req.body.title,
+        text: req.body.text,
+    };
+
+    console.log(newNotes);
+    noteList.push(newNotes);
+    fs.writeFileSync("./db/db.json", JSON.stringify(allNotes));
+
+    return res.json(allNotes);
+});
+
+module.exports = router;
